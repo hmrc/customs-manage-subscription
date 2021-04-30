@@ -21,8 +21,6 @@ targetJvm := "jvm-1.8"
 
 scalaVersion := "2.12.10"
 
-resolvers += Resolver.bintrayRepo("hmrc", "releases")
-
 lazy val microservice = (project in file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
