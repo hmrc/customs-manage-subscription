@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.customs.managesubscription.connectors
 
-import play.api.Logger._
 import play.api.http.Status._
+import uk.gov.hmrc.customs.managesubscription.CdsLogger.logger
 import uk.gov.hmrc.customs.managesubscription.audit.Auditable
 import uk.gov.hmrc.customs.managesubscription.config.AppConfig
 import uk.gov.hmrc.customs.managesubscription.domain.DataStoreRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
