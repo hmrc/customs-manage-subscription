@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter
 import java.time.{Clock, ZoneId, ZonedDateTime}
 import java.util.UUID
 import javax.inject.Inject
-import play.api.Logger.logger
+import uk.gov.hmrc.customs.managesubscription.CdsLogger.logger
 import play.api.http.HeaderNames._
 import play.api.http.MimeTypes
 import play.api.http.Status.OK
@@ -35,10 +35,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class SubscriptionDisplayConnector @Inject()(appConfig: AppConfig, httpClient: HttpClient, audit: Auditable)(implicit ec: ExecutionContext){
   
   def callSubscriptionDisplay(queryParams: Seq[(String, String)])(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val headerCarrier: HeaderCarrier = hc.withExtraHeaders(generateHeadersWithBearerToken: _*)
     val url = appConfig.subscriptionDisplayUrl + makeQueryString(queryParams)
-    auditRequestHeaders(headerCarrier.headers, url)
-    httpClient.doGet(url)(headerCarrier, ec) map { response =>
+    val headers = generateHeadersWithBearerToken
+    auditRequestHeaders(headers, url)
+    httpClient.doGet(url, headers)(ec) map { response =>
       auditResponse(response, url)
       logResponse(response.status)
       extractEoriNumber(Json.parse(response.body))

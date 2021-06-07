@@ -16,9 +16,9 @@
 
 package unit.connectors
 
-import controllers.Assets.NO_CONTENT
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
+import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.customs.managesubscription.audit.Auditable
 import uk.gov.hmrc.customs.managesubscription.connectors.CustomsDataStoreConnector
 import uk.gov.hmrc.customs.managesubscription.domain.DataStoreRequest
@@ -38,14 +38,14 @@ class CustomsDataStoreConnectorSpec extends BaseSpec {
 
   "CustomsDataStoreConnector" should {
     "successfully send a query request to customs data store and return the OK response" in {
-      when(mockHttp.doPost(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(HttpResponse(204, "")))
+      when(mockHttp.doPost(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(204, "")))
       doNothing().when(mockAuditable).sendDataEvent(any(), any(), any(), any())(any[HeaderCarrier])
       val result = await(testConnector.updateDataStore(DataStoreRequest("eori", "address", "timestamp")))
       result.status shouldBe NO_CONTENT
     }
 
     "return the failure response from customs data store" in {
-      when(mockHttp.doPost(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(HttpResponse(500,"InternalServerError")))
+      when(mockHttp.doPost(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(500,"InternalServerError")))
       doNothing().when(mockAuditable).sendDataEvent(any(), any(), any(), any())(any[HeaderCarrier])
       val result = await(testConnector.updateDataStore(DataStoreRequest("", "", "")))
       result.status shouldBe 500
