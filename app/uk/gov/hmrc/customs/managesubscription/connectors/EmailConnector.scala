@@ -34,7 +34,7 @@ class EmailConnector @Inject()(appConfig: AppConfig, httpClient: HttpClient, aud
 
   def sendEmail(email: Email)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
 
-    httpClient.doPost[Email](appConfig.emailServiceUrl, email, Seq("Content-Type" -> "application/json"))
+    httpClient.POST[Email, HttpResponse](appConfig.emailServiceUrl, email, Seq("Content-Type" -> "application/json"))
       .map { response =>
         audit(email,response,appConfig.emailServiceUrl)
         logResponse(email.templateId)(response.status); response

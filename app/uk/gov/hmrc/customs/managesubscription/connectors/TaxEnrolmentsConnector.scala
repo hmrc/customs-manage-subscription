@@ -21,7 +21,7 @@ import play.api.http.Status._
 import uk.gov.hmrc.customs.managesubscription.BuildUrl
 import uk.gov.hmrc.customs.managesubscription.CdsLogger.logger
 import uk.gov.hmrc.customs.managesubscription.domain.protocol.TaxEnrolmentsRequest
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class TaxEnrolmentsConnector @Inject()(buildUrl: BuildUrl, httpClient: HttpClien
 
     logger.info(s"$loggerId putUrl: $url")
 
-    httpClient.doPut[TaxEnrolmentsRequest](url, request) map {
+    httpClient.PUT[TaxEnrolmentsRequest, HttpResponse](url, request) map {
       _.status match {
         case s@BAD_REQUEST =>
           logger.error(s"$loggerId tax enrolment request failed with BAD_REQUEST status")

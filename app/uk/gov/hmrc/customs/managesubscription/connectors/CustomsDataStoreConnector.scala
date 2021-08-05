@@ -33,7 +33,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: AppConfig, httpClient: Http
 
     auditRequest(dataStoreRequest, appConfig.customDataStoreUrl)
 
-    httpClient.doPost[DataStoreRequest](appConfig.customDataStoreUrl,dataStoreRequest)
+    httpClient.POST[DataStoreRequest, HttpResponse](appConfig.customDataStoreUrl,dataStoreRequest)
       .map { response =>
         auditResponse(response, appConfig.customDataStoreUrl)
         logResponse(response.status)

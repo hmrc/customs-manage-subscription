@@ -29,16 +29,22 @@ import util.RequestHeaders._
 import util.TestData.SubscriptionResult._
 import util.TestData._
 import util.mongo.ReactiveMongoComponentForTests
-import util.{ExternalServicesConfig, MDTPEmailService}
+import util.{CustomsDataStoreService, ExternalServicesConfig, MDTPEmailService}
 
 import scala.concurrent.Future
 
 
 class SubscriptionResultSpec extends ComponentTestSpec
   with OptionValues
-  with MDTPEmailService {
+  with MDTPEmailService with CustomsDataStoreService {
 
   private lazy val recipientDetailsRepository = app.injector.instanceOf[RecipientDetailsRepository]
+  private val expectedUrl = "/customs-data-store/update-email"
+  private val dataStoreRequestQuery = s"""{
+                                         |  "eori" : "${eori.value}",
+                                         |  "address" : "${recipientDetails.recipientEmailAddress}",
+                                         |  "timestamp" : "${emailVerificationTimestamp}"
+                                         |}""".stripMargin
 
   implicit override lazy val app: Application = new GuiceApplicationBuilder().configure(Map(
     "microservice.services.email.host" -> ExternalServicesConfig.Host,
@@ -73,6 +79,7 @@ class SubscriptionResultSpec extends ComponentTestSpec
     scenario("MDG submits a request with data using the API") {
 
       Given("the API is available")
+      returnCustomsDataStoreResponse(expectedUrl, dataStoreRequestQuery, NO_CONTENT)
       await(recipientDetailsRepository.saveRecipientDetailsForBundleId(formBundleId, Some(eori), recipientDetails, emailVerificationTimestamp, safeId)) shouldBe true
       val request = FakeRequest("POST", s"/$formBundleId")
         .withHeaders(CONTENT_TYPE_HEADER, ACCEPT_HEADER, AUTHORISATION_HEADER)

@@ -38,14 +38,14 @@ class CustomsDataStoreConnectorSpec extends BaseSpec {
 
   "CustomsDataStoreConnector" should {
     "successfully send a query request to customs data store and return the OK response" in {
-      when(mockHttp.doPost(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(204, "")))
+      when(mockHttp.POST[DataStoreRequest, HttpResponse](any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(HttpResponse(204, "")))
       doNothing().when(mockAuditable).sendDataEvent(any(), any(), any(), any())(any[HeaderCarrier])
       val result = await(testConnector.updateDataStore(DataStoreRequest("eori", "address", "timestamp")))
       result.status shouldBe NO_CONTENT
     }
 
     "return the failure response from customs data store" in {
-      when(mockHttp.doPost(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(500,"InternalServerError")))
+      when(mockHttp.POST[DataStoreRequest, HttpResponse](any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(HttpResponse(500,"InternalServerError")))
       doNothing().when(mockAuditable).sendDataEvent(any(), any(), any(), any())(any[HeaderCarrier])
       val result = await(testConnector.updateDataStore(DataStoreRequest("", "", "")))
       result.status shouldBe 500
