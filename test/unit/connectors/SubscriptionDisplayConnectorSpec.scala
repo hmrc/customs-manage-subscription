@@ -40,20 +40,20 @@ class SubscriptionDisplayConnectorSpec extends BaseSpec {
   "SubscriptionDisplayConnector" should {
     "return EORINo when a request to subscription display is successful" in {
       val responseBody = Json.parse("""{"subscriptionDisplayResponse": {"responseDetail": {"EORINo": "123456789"}}}""")
-      when(mockHttp.doGet(any(), any())(any())).thenReturn(Future.successful(HttpResponse(status = 200, json = responseBody, headers = Map.empty)))
+      when(mockHttp.GET[HttpResponse](any[String], any[Seq[(String, String)]], any[Seq[(String, String)]])(any(), any(), any())).thenReturn(Future.successful(HttpResponse(status = 200, json = responseBody, headers = Map.empty)))
       doNothing().when(mockAuditable).sendDataEvent(any(), any(), any(), any())(any[HeaderCarrier])
       await(testConnector.callSubscriptionDisplay(Seq(("queryparam", "value")))) shouldBe Some("123456789")
     }
 
     "return None when no EORINo received from subscription display" in {
       val responseBody = Json.parse("""{"subscriptionDisplayResponse": {}}""")
-      when(mockHttp.doGet(any(), any())(any())).thenReturn(Future.successful(HttpResponse(status = 200, json = responseBody, headers = Map.empty)))
+      when(mockHttp.GET[HttpResponse](any[String], any[Seq[(String, String)]], any[Seq[(String, String)]])(any(), any(), any())).thenReturn(Future.successful(HttpResponse(status = 200, json = responseBody, headers = Map.empty)))
       doNothing().when(mockAuditable).sendDataEvent(any(), any(), any(), any())(any[HeaderCarrier])
       await(testConnector.callSubscriptionDisplay(Seq(("queryparam", "value")))) shouldBe None
     }
 
     "return None when a request to subscription display is failed" in {
-      when(mockHttp.doGet(any(), any())(any())).thenReturn(Future.successful(HttpResponse(status = 400, json = JsString("error message"), headers = Map.empty)))
+      when(mockHttp.GET[HttpResponse](any[String], any[Seq[(String, String)]], any[Seq[(String, String)]])(any(), any(), any())).thenReturn(Future.successful(HttpResponse(status = 400, json = JsString("error message"), headers = Map.empty)))
       doNothing().when(mockAuditable).sendDataEvent(any(), any(), any(), any())(any[HeaderCarrier])
       await(testConnector.callSubscriptionDisplay(Nil)) shouldBe None
     }

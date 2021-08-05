@@ -22,8 +22,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.customs.managesubscription.audit.Auditable
 import uk.gov.hmrc.customs.managesubscription.connectors.EmailConnector
 import uk.gov.hmrc.customs.managesubscription.services.dto.Email
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import util.BaseSpec
 
 import scala.concurrent.Future
@@ -41,7 +40,7 @@ class EmailConnectorSpec extends BaseSpec {
   private val auditType = "customs-email-status"
   "EmailConnector" should {
     "successfully send a email request to Email service and return the OK response" in {
-      when(mockHttp.doPost(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(200, "")))
+      when(mockHttp.POST[Email, HttpResponse](any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(HttpResponse(200, "")))
       doNothing().when(mockAuditable).sendDataEvent(any(), any(), any(), any())(any[HeaderCarrier])
       val result = await(testConnector.sendEmail(emailRequest))
       result.status shouldBe 200
@@ -50,14 +49,14 @@ class EmailConnectorSpec extends BaseSpec {
 
     "successfully send a email request to Email service and return the ACCEPTED response" in {
       val details202 = Map("emailRequest" -> Json.prettyPrint(Json.toJson(emailRequest)),"status" -> "202")
-      when(mockHttp.doPost(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(202, "")))
+      when(mockHttp.POST[Email, HttpResponse](any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(HttpResponse(202, "")))
       val result = await(testConnector.sendEmail(Email(List("toEmail"), "templateId", Map.empty)))
       result.status shouldBe 202
       verify(mockAuditable).sendDataEvent(transactionName, path, details202, auditType)
     }
 
     "return the failure response from Email service" in {
-      when(mockHttp.doPost(any(), any(), any())(any(), any())).thenReturn(Future.successful(HttpResponse(400, "")))
+      when(mockHttp.POST[Email, HttpResponse](any(), any(), any())(any(), any(), any(), any())).thenReturn(Future.successful(HttpResponse(400, "")))
       val emailRequest = Email(List(""), "templateId", Map.empty)
       val details400 = Map("emailRequest" -> Json.prettyPrint(Json.toJson(emailRequest)),"status" -> "400")
       val result = await(testConnector.sendEmail(Email(List(""), "templateId", Map.empty)))

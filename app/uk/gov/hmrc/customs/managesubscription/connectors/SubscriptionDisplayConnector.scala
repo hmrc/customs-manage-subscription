@@ -38,7 +38,7 @@ class SubscriptionDisplayConnector @Inject()(appConfig: AppConfig, httpClient: H
     val url = appConfig.subscriptionDisplayUrl + makeQueryString(queryParams)
     val headers = generateHeadersWithBearerToken
     auditRequestHeaders(headers, url)
-    httpClient.doGet(url, headers)(ec) map { response =>
+    httpClient.GET(url, Seq(), headers) map { response =>
       auditResponse(response, url)
       logResponse(response.status)
       extractEoriNumber(Json.parse(response.body))

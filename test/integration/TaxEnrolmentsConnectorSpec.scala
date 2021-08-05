@@ -56,7 +56,8 @@ class TaxEnrolmentsConnectorSpec extends IntegrationTestsWithDbSpec with TaxEnro
 
     "return successful future with correct status when enrolment status service returns any fail status" in {
       returnEnrolmentResponseWhenReceiveRequest(expectedPutUrl, validRequestJson.toString, BAD_REQUEST)
-      taxEnrolmentsConnector.enrol(taxEnrolmentsRequest, formBundleId).futureValue shouldBe BAD_REQUEST
+      taxEnrolmentsConnector.enrol(taxEnrolmentsRequest, formBundleId).failed.getMessage shouldBe
+        "PUT of 'http://localhost:11111/tax-enrolments/subscriptions/bundle-id/subscriber' returned 400 (Bad Request). Response body ''"
     }
   }
 }
