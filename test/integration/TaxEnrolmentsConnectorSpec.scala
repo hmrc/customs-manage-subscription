@@ -22,11 +22,9 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import uk.gov.hmrc.customs.managesubscription.connectors.TaxEnrolmentsConnector
 import uk.gov.hmrc.customs.managesubscription.domain.protocol.TaxEnrolmentsRequest
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
+import uk.gov.hmrc.http.HeaderCarrier
 import util.TaxEnrolmentService
 import util.TestData.TaxEnrolment.validRequestJson
-
-import scala.concurrent.Future
 
 class TaxEnrolmentsConnectorSpec extends IntegrationTestsWithDbSpec with TaxEnrolmentService with ScalaFutures {
 

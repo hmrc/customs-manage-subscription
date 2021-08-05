@@ -25,7 +25,6 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import util.BaseSpec
 import util.RequestHeaders.{ACCEPT_HEADER, AUTHORISATION_HEADER, CONTENT_TYPE_HEADER}
 
-import java.net.URL
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
